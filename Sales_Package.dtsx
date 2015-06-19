@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:MaxErrorCount="0"
   DTS:ObjectName="Sales_Package"
-  DTS:VersionBuild="5"
-  DTS:VersionGUID="{882B6A57-F443-425C-923F-B092B6FDB7F5}">
+  DTS:VersionBuild="12"
+  DTS:VersionGUID="{7760DD02-428F-40A9-A1B0-3579FA56B77C}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -315,13 +315,6 @@
                       cachedName="ModifiedDate"
                       externalMetadataColumnId="Package\Data Flow Task 1\Destination 1 - CreditCard.Inputs[Destination Input].ExternalColumns[ModifiedDate]"
                       lineageId="Package\Data Flow Task 1\Source 1 - CreditCard.Outputs[OLE DB Source Output].Columns[ModifiedDate]" />
-                    <inputColumn
-                      refId="Package\Data Flow Task 1\Destination 1 - CreditCard.Inputs[Destination Input].Columns[CardNumber_Encrypted]"
-                      cachedDataType="bytes"
-                      cachedLength="128"
-                      cachedName="CardNumber_Encrypted"
-                      externalMetadataColumnId="Package\Data Flow Task 1\Destination 1 - CreditCard.Inputs[Destination Input].ExternalColumns[CardNumber_Encrypted]"
-                      lineageId="Package\Data Flow Task 1\Source 1 - CreditCard.Outputs[OLE DB Source Output].Columns[CardNumber_Encrypted]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -1053,7 +1046,11 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">DECLARE @Last int
+SET @Last = (SELECT  top 1 [CreditCardID]
+  FROM [Staging].[Sales].[CreditCard]
+  order by creditcardid DESC)
+SELECT * FROM [AdventureWorks2012].[Sales].[CreditCard] WHERE[CreditCardID] &gt; @Last;</property>
                 <property
                   dataType="System.String"
                   description="The variable that contains the SQL command to be executed."
@@ -1070,7 +1067,7 @@
                   dataType="System.Int32"
                   description="Specifies the mode used to access the database."
                   name="AccessMode"
-                  typeConverter="AccessMode">0</property>
+                  typeConverter="AccessMode">2</property>
                 <property
                   dataType="System.String"
                   description="The mappings between the parameters in the SQL command and variables."
@@ -1145,16 +1142,6 @@
                       lineageId="Package\Data Flow Task 1\Source 1 - CreditCard.Outputs[OLE DB Source Output].Columns[ModifiedDate]"
                       name="ModifiedDate"
                       truncationRowDisposition="FailComponent" />
-                    <outputColumn
-                      refId="Package\Data Flow Task 1\Source 1 - CreditCard.Outputs[OLE DB Source Output].Columns[CardNumber_Encrypted]"
-                      dataType="bytes"
-                      errorOrTruncationOperation="Conversion"
-                      errorRowDisposition="FailComponent"
-                      externalMetadataColumnId="Package\Data Flow Task 1\Source 1 - CreditCard.Outputs[OLE DB Source Output].ExternalColumns[CardNumber_Encrypted]"
-                      length="128"
-                      lineageId="Package\Data Flow Task 1\Source 1 - CreditCard.Outputs[OLE DB Source Output].Columns[CardNumber_Encrypted]"
-                      name="CardNumber_Encrypted"
-                      truncationRowDisposition="FailComponent" />
                   </outputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -1228,12 +1215,6 @@
                       dataType="dbTimeStamp"
                       lineageId="Package\Data Flow Task 1\Source 1 - CreditCard.Outputs[OLE DB Source Error Output].Columns[ModifiedDate]"
                       name="ModifiedDate" />
-                    <outputColumn
-                      refId="Package\Data Flow Task 1\Source 1 - CreditCard.Outputs[OLE DB Source Error Output].Columns[CardNumber_Encrypted]"
-                      dataType="bytes"
-                      length="128"
-                      lineageId="Package\Data Flow Task 1\Source 1 - CreditCard.Outputs[OLE DB Source Error Output].Columns[CardNumber_Encrypted]"
-                      name="CardNumber_Encrypted" />
                     <outputColumn
                       refId="Package\Data Flow Task 1\Source 1 - CreditCard.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
                       dataType="i4"
@@ -3122,7 +3103,11 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">DECLARE @Last int
+SET @Last = (SELECT top 1 [SalesOrderID]
+  FROM [Staging].[Sales].[SalesOrderDetail]
+  order by salesorderid DESC)
+SELECT * FROM [AdventureWorks2012].[Sales].[SalesOrderDetail] WHERE[SalesOrderID] &gt; @Last;</property>
                 <property
                   dataType="System.String"
                   description="The variable that contains the SQL command to be executed."
@@ -3139,7 +3124,7 @@
                   dataType="System.Int32"
                   description="Specifies the mode used to access the database."
                   name="AccessMode"
-                  typeConverter="AccessMode">0</property>
+                  typeConverter="AccessMode">2</property>
                 <property
                   dataType="System.String"
                   description="The mappings between the parameters in the SQL command and variables."
@@ -7924,6 +7909,7 @@
       DTS:refId="Package\Execute T-SQL Statement Task"
       DTS:CreationName="Microsoft.SqlServer.Management.DatabaseMaintenance.DbMaintenanceTSQLExecuteTask, Microsoft.SqlServer.MaintenancePlanTasks, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:Description="Execute T-SQL Statement Task"
+      DTS:DisableEventHandlers="True"
       DTS:DTSID="{33DABF10-BEB6-4233-85E8-08199C92EAF8}"
       DTS:ExecutableType="Microsoft.SqlServer.Management.DatabaseMaintenance.DbMaintenanceTSQLExecuteTask, Microsoft.SqlServer.MaintenancePlanTasks, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
@@ -8462,154 +8448,198 @@
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Data Flow Task 1\Source 1 - CreditCard">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Data Flow Task 1\Destination 1 - CreditCard">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
   <TaskHost
     design-time-name="Package\Data Flow Task 2">
     <LayoutInfo>
       <GraphLayout
-        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="NaN,NaN"
+          Size="276,42"
           Id="Package\Data Flow Task 2\Source 8 - SalesOrderHeaderSalesReason"
-          TopLeft="NaN,NaN" />
+          TopLeft="16,5.5" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="297,42"
           Id="Package\Data Flow Task 2\Destination 8 - SalesOrderHeaderSalesReason"
-          TopLeft="NaN,NaN" />
+          TopLeft="5.5,107.5" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="238,42"
           Id="Package\Data Flow Task 2\Destination 7 - SalesOrderHeader"
-          TopLeft="NaN,NaN" />
+          TopLeft="363,107.5" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="218,42"
           Id="Package\Data Flow Task 2\Source 7 - SalesOrderHeader"
-          TopLeft="NaN,NaN" />
+          TopLeft="373,5.5" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="211,42"
           Id="Package\Data Flow Task 2\Source 6 - SalesOrderDetail"
-          TopLeft="NaN,NaN" />
+          TopLeft="672.5,5.5" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="232,42"
           Id="Package\Data Flow Task 2\Destination 6 - SalesOrderDetail"
-          TopLeft="NaN,NaN" />
+          TopLeft="662,107.5" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="189,42"
           Id="Package\Data Flow Task 2\Source 9 - SalesPerson"
-          TopLeft="NaN,NaN" />
+          TopLeft="965.5,5.49999999999989" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="214,42"
           Id="Package\Data Flow Task 2\Source 5 - PersonCreditCard"
-          TopLeft="NaN,NaN" />
+          TopLeft="1236,5.49999999999989" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="210,42"
           Id="Package\Data Flow Task 2\Destination 9 - SalesPerson"
-          TopLeft="NaN,NaN" />
+          TopLeft="955,107.5" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="235,42"
           Id="Package\Data Flow Task 2\Destination 5 - PersonCreditCard"
-          TopLeft="NaN,NaN" />
+          TopLeft="1225.5,107.5" />
         <EdgeLayout
           Id="Package\Data Flow Task 2.Paths[OLE DB Source Output2]"
-          TopLeft="NaN,NaN">
+          TopLeft="482,47.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,60"
               Start="0,0"
-              End="0,0">
+              End="0,52.5">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Data Flow Task 2.Paths[OLE DB Source Output1]"
-          TopLeft="NaN,NaN">
+          TopLeft="778,47.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,60"
               Start="0,0"
-              End="0,0">
+              End="0,52.5">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Data Flow Task 2.Paths[OLE DB Source Output]"
-          TopLeft="NaN,NaN">
+          TopLeft="1343,47.4999999999999">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,60"
               Start="0,0"
-              End="0,0">
+              End="0,52.5">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Data Flow Task 2.Paths[OLE DB Source Output4]"
-          TopLeft="NaN,NaN">
+          TopLeft="1060,47.4999999999999">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,60"
               Start="0,0"
-              End="0,0">
+              End="0,52.5">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Data Flow Task 2.Paths[OLE DB Source Output3]"
-          TopLeft="NaN,NaN">
+          TopLeft="154,47.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,60"
               Start="0,0"
-              End="0,0">
+              End="0,52.5">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Data Flow Task 2\Source 6 - SalesOrderDetail">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
   <TaskHost
     design-time-name="Package\Data Flow Task 3">
     <LayoutInfo>
